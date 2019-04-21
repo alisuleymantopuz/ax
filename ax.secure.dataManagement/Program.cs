@@ -13,6 +13,6 @@ namespace ax.secure.dataManagement
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
-                .UseUrls(urls: "http://localhost:5100");
+                .UseUrls(urls: "http://*:5100");
     }
 }
