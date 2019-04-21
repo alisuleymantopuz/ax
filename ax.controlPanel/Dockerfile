@@ -13,11 +13,11 @@ COPY . .
 
 WORKDIR /src/ax.encryptionProvider.Tests
 RUN dotnet build ax.encryptionProvider.Tests.csproj -c Release -o /app
-RUN dotnet test  ax.encryptionProvider.Tests.csproj -c Release --no-build --no-restore
+RUN dotnet test  "/app/ax.encryptionProvider.Tests.csproj" -c Release --no-build --no-restore
 
 WORKDIR /src/ax.fileProcessor.Tests
 RUN dotnet build ax.fileProcessor.Tests.csproj -c Release -o /app
-RUN dotnet test  ax.fileProcessor.Tests.csproj -c Release --no-build --no-restore
+RUN dotnet test  "/app/ax.fileProcessor.Tests.csproj" -c Release --no-build --no-restore
 
 WORKDIR /src/ax.controlPanel
 RUN dotnet build ax.controlPanel.csproj -c Release -o /app
