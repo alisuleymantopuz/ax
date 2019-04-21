@@ -11,6 +11,8 @@ COPY ax.encryptionProvider.Tests/ax.encryptionProvider.Tests.csproj ax.encryptio
 RUN dotnet restore ax.controlPanel/ax.controlPanel.csproj
 COPY . .
 WORKDIR /src/ax.controlPanel
+RUN dotnet build ax.encryptionProvider.Tests/ax.encryptionProvider.Tests.csproj -c Release -o /app
+RUN dotnet build ax.fileProcessor.Tests/ax.fileProcessor.Tests.csproj -c Release -o /app
 RUN dotnet build ax.controlPanel.csproj -c Release -o /app
 
 RUN dotnet test ax.encryptionProvider.Tests/ax.encryptionProvider.Tests.csproj -c Release --no-build --no-restore
