@@ -1,5 +1,6 @@
 FROM microsoft/dotnet:2.2-aspnetcore-runtime AS base
 WORKDIR /app
+EXPOSE 5000
 
 FROM microsoft/dotnet:2.2-sdk AS build
 WORKDIR /src
@@ -26,4 +27,4 @@ RUN dotnet publish ax.controlPanel.csproj -c Release -o /app
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
-ENTRYPOINT ["dotnet", "ax.controlPanel.dll"]
+ENTRYPOINT ["dotnet", "ax.controlPanel.dll","--server.urls", "http://0.0.0.0:5000"]
