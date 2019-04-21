@@ -9,14 +9,23 @@ COPY ax.encryptionProvider/ax.encryptionProvider.csproj ax.encryptionProvider/
 COPY ax.encryptionProvider.Tests/ax.encryptionProvider.Tests.csproj ax.encryptionProvider.Tests/
 COPY ax.storage/ax.storage.csproj ax.storage/
 COPY ax.storage.Tests/ax.storage.Tests.csproj ax.storage.Tests/
+
+RUN dotnet restore ax.encryptionProvider.Tests/ax.encryptionProvider.Tests.csproj
+RUN dotnet build ax.encryptionProvider.Tests/ax.encryptionProvider.Tests.csproj -c Release
+RUN dotnet test  ax.encryptionProvider.Tests/ax.encryptionProvider.Tests.csproj -c Release --no-build --no-restore
+
+RUN dotnet restore ax.storage.Tests/ax.storage.Tests.csproj
+RUN dotnet build ax.storage.Tests/ax.storage.Tests.csproj -c Release
+RUN dotnet test ax.storage.Tests/ax.storage.Tests.csproj -c Release --no-build --no-restore
+
+RUN dotnet restore ax.dataManagement.integration.Tests/ax.dataManagement.integration.Tests.csproj
+RUN dotnet build ax.dataManagement.integration.Tests/ax.dataManagement.integration.Tests.csproj -c Release
+RUN dotnet test ax.dataManagement.integration.Tests/ax.dataManagement.integration.Tests.csproj -c Release --no-build --no-restore
+
 RUN dotnet restore ax.secure.dataManagement/ax.secure.dataManagement.csproj
 COPY . .
 WORKDIR /src/ax.secure.dataManagement
 RUN dotnet build ax.secure.dataManagement.csproj -c Release -o /app
-
-RUN dotnet test ax.storage.Tests/ax.storage.Tests.csproj -c Release --no-build --no-restore
-RUN dotnet test ax.encryptionProvider.Tests/ax.encryptionProvider.Tests.csproj -c Release --no-build --no-restore
-RUN dotnet test ax.secure.dataManagement.integration.Tests/ax.secure.dataManagement.integration.Tests.csproj -c Release --no-build --no-restore
 
 FROM build AS publish
 RUN dotnet publish ax.secure.dataManagement.csproj -c Release -o /app
