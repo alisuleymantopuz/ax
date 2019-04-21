@@ -27,6 +27,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "fileProcessor", "fileProces
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "storage", "storage", "{D482DDED-E89C-4647-8474-285463691F0D}"
 EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{E3B3C280-19B4-4A6B-ADB9-80CB1A5B8A2F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,10 @@ Global
 		{483E2D26-D031-44AA-84EF-F58C541B8019}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{483E2D26-D031-44AA-84EF-F58C541B8019}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{483E2D26-D031-44AA-84EF-F58C541B8019}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3B3C280-19B4-4A6B-ADB9-80CB1A5B8A2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3B3C280-19B4-4A6B-ADB9-80CB1A5B8A2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3B3C280-19B4-4A6B-ADB9-80CB1A5B8A2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3B3C280-19B4-4A6B-ADB9-80CB1A5B8A2F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{1CDE3510-BC38-444A-A6CA-F79F16E9E1E2} = {8BADB37E-08BC-42D3-A0AF-6E4F60AAE36A}

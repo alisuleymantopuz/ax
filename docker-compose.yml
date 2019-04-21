@@ -1,0 +1,15 @@
+version: '3.4'
+
+services:
+  ax.secure.datamanagement:
+    image: ${DOCKER_REGISTRY-}axsecure
+    build:
+      context: .
+      dockerfile: ax.secure.dataManagement/Dockerfile
+
+  ax.controlpanel:
+    image: ${DOCKER_REGISTRY-}ax
+    build:
+      context: .
+      dockerfile: ax.controlPanel/Dockerfile
+
