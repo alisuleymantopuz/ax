@@ -10,13 +10,17 @@ COPY ax.encryptionProvider/ax.encryptionProvider.csproj ax.encryptionProvider/
 COPY ax.encryptionProvider.Tests/ax.encryptionProvider.Tests.csproj ax.encryptionProvider.Tests/
 RUN dotnet restore ax.controlPanel/ax.controlPanel.csproj
 COPY . .
-WORKDIR /src/ax.controlPanel
-RUN dotnet build ax.encryptionProvider.Tests/ax.encryptionProvider.Tests.csproj -c Release -o /app
-RUN dotnet build ax.fileProcessor.Tests/ax.fileProcessor.Tests.csproj -c Release -o /app
-RUN dotnet build ax.controlPanel.csproj -c Release -o /app
 
-RUN dotnet test ax.encryptionProvider.Tests/ax.encryptionProvider.Tests.csproj -c Release --no-build --no-restore
-RUN dotnet test ax.fileProcessor.Tests/ax.fileProcessor.Tests.csproj -c Release --no-build --no-restore
+WORKDIR /src/ax.encryptionProvider.Tests
+RUN dotnet build ax.encryptionProvider.Tests.csproj -c Release -o /app
+RUN dotnet test  ax.encryptionProvider.Tests.csproj -c Release --no-build --no-restore
+
+WORKDIR /src/ax.fileProcessor.Tests
+RUN dotnet build ax.fileProcessor.Tests.csproj -c Release -o /app
+RUN dotnet test  ax.fileProcessor.Tests.csproj -c Release --no-build --no-restore
+
+WORKDIR /src/ax.controlPanel
+RUN dotnet build ax.controlPanel.csproj -c Release -o /app
 
 FROM build AS publish
 RUN dotnet publish ax.controlPanel.csproj -c Release -o /app
