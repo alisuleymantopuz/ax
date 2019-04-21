@@ -8,16 +8,17 @@ COPY ax.fileProcessor/ax.fileProcessor.csproj ax.fileProcessor/
 COPY ax.fileProcessor.Tests/ax.fileProcessor.Tests.csproj ax.fileProcessor.Tests/
 COPY ax.encryptionProvider/ax.encryptionProvider.csproj ax.encryptionProvider/
 COPY ax.encryptionProvider.Tests/ax.encryptionProvider.Tests.csproj ax.encryptionProvider.Tests/
+
+RUN dotnet restore ax.encryptionProvider.Tests/ax.encryptionProvider.Tests.csproj
+RUN dotnet build ax.encryptionProvider.Tests/ax.encryptionProvider.Tests.csproj -c Release
+RUN dotnet test  ax.encryptionProvider.Tests/ax.encryptionProvider.Tests.csproj -c Release --no-build --no-restore
+
+RUN dotnet restore ax.fileProcessor.Tests/ax.fileProcessor.Tests.csproj
+RUN dotnet build ax.fileProcessor.Tests/ax.fileProcessor.Tests.csproj -c Release
+RUN dotnet test  ax.fileProcessor.Tests/ax.fileProcessor.Tests.csproj -c Release --no-build --no-restore
+
 RUN dotnet restore ax.controlPanel/ax.controlPanel.csproj
 COPY . .
-
-WORKDIR /src/ax.encryptionProvider.Tests
-RUN dotnet build ax.encryptionProvider.Tests.csproj -c Release -o /app
-RUN dotnet test  "/app/ax.encryptionProvider.Tests.csproj" -c Release --no-build --no-restore
-
-WORKDIR /src/ax.fileProcessor.Tests
-RUN dotnet build ax.fileProcessor.Tests.csproj -c Release -o /app
-RUN dotnet test  "/app/ax.fileProcessor.Tests.csproj" -c Release --no-build --no-restore
 
 WORKDIR /src/ax.controlPanel
 RUN dotnet build ax.controlPanel.csproj -c Release -o /app
