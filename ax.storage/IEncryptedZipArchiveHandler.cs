@@ -13,13 +13,13 @@ namespace ax.storage
         /// </summary>
         /// <returns>The raw content.</returns>
         /// <param name="rawContent">Raw content.</param>
-        IEnumerable<string> DeserializeRawContent(string rawContent);
+        ZipArchiveEntryItem DeserializeRawContent(string rawContent);
 
         /// <summary>
         /// Decrypts the zip archive.
         /// </summary>
         /// <returns>The zip archive.</returns>
-        /// <param name="decryptedPaths">Decrypted paths.</param>
-        IEnumerable<string> DecryptZipArchive(IEnumerable<string> decryptedPaths);
+        /// <param name="paths">Decrypted paths.</param>
+        ZipArchiveEntryItem DecryptZipArchive(ZipArchiveEntryItem paths);
     }
 }

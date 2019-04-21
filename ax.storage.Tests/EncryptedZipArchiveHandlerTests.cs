@@ -21,29 +21,42 @@ namespace ax.storage.Tests
         {
             MockAesEncryptionHelper.Setup(x => x.Decrypt(It.IsAny<string>())).Returns("decrypted");
 
-            var fakePath = new List<string>() { "encrypted" };
+            var zipArchiveEntryItem = new ZipArchiveEntryItem { Name = "encrypted" };
+            zipArchiveEntryItem.Files = new List<string>() { "encrypted", "encrypted", "encrypted" };
+
+            var subZipArchiveEntryItem = new ZipArchiveEntryItem { Name = "encrypted" };
+            subZipArchiveEntryItem.Files = new List<string>() { "encrypted", "encrypted", "encrypted" };
+
+            zipArchiveEntryItem.Folders = new List<ZipArchiveEntryItem>
+            {
+                subZipArchiveEntryItem
+            };
 
             var encryptedZipArchiveHandler = new EncryptedZipArchiveHandler(MockAesEncryptionHelper.Object);
 
-            var decryptedPaths = encryptedZipArchiveHandler.DecryptZipArchive(fakePath);
+            var decryptedPaths = encryptedZipArchiveHandler.DecryptZipArchive(zipArchiveEntryItem);
 
-            decryptedPaths.Count().Should().Be(1);
+            decryptedPaths.Name.Should().Be("decrypted");
 
-            decryptedPaths.First().Should().Be("decrypted");
+            decryptedPaths.Files.First().Should().Be("decrypted");
+
+            decryptedPaths.Folders.First().Name.Should().Be("decrypted");
+
+            decryptedPaths.Folders.First().Files.First().Should().Be("decrypted");
         }
 
         [Fact]
         public void DeserializeRawContent_Success()
         {
-            var rawContent = "[ \"Ford\", \"BMW\", \"Fiat\" ]";
+            var rawContent = "{\"Name\":\"z3T3j3ZDSFLM6DVc5l7s5Q==\",\"Files\":[\"LwhnBoFuFhXYPwNPzW5Vmg==\"],\"Folders\":[]}";
 
             var encryptedZipArchiveHandler = new EncryptedZipArchiveHandler(MockAesEncryptionHelper.Object);
 
-            IEnumerable<string> dersializedContent = encryptedZipArchiveHandler.DeserializeRawContent(rawContent);
+            ZipArchiveEntryItem deserializedContent = encryptedZipArchiveHandler.DeserializeRawContent(rawContent);
 
-            dersializedContent.Count().Should().Be(3);
+            deserializedContent.Should().NotBeNull();
 
-            dersializedContent.First().Should().Be("Ford");
+            deserializedContent.Name.Should().NotBeNull();
         }
     }
 }

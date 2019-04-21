@@ -10,9 +10,11 @@ namespace ax.fileProcessor.Tests.Fake
             return new AuthCredential { Password = "mom", Username = "mama" };
         }
 
-        public static List<ZipArchiveEntryItem> FakeZipArchiveEntryItems() => new List<ZipArchiveEntryItem>(){
-                new ZipArchiveEntryItem { FullName = "testFolder/", Name = "" },
-                new ZipArchiveEntryItem { FullName = "testFolder/data.png", Name = "data.png" }};
-
+        public static List<ZipEntryInfo> FakeZipArchiveEntryItems()
+        {
+            return new List<ZipEntryInfo>(){
+                new ZipEntryInfo {  FullName = "testFolder/", Name = "" },
+                new ZipEntryInfo {  FullName = "testFolder/data.png", Name = "data.png" }};
+        }
     }
 }

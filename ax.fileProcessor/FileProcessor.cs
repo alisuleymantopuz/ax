@@ -1,6 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
 using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
 
 namespace ax.fileProcessor
 {
@@ -16,9 +15,9 @@ namespace ax.fileProcessor
             if (result.IsFailure)
                 return Result.Fail<string>(result.Error);
 
-            IEnumerable<string> paths = PopulatePaths(file);
+            ZipArchiveEntryItem paths = PopulatePaths(file);
 
-            IEnumerable<string> encryptedPaths = EncryptPaths(paths);
+            ZipArchiveEntryItem encryptedPaths = EncryptPaths(paths);
 
             string json = FormJSON(encryptedPaths);
 
@@ -32,24 +31,24 @@ namespace ax.fileProcessor
         public abstract Result ValidateFormat(IFormFile file);
 
         /// <summary>
-        /// Populates the file list.
+        /// Populates the paths.
         /// </summary>
-        /// <returns>The file list.</returns>
+        /// <returns>The paths.</returns>
         /// <param name="file">File.</param>
-        public abstract IEnumerable<string> PopulatePaths(IFormFile file);
+        public abstract ZipArchiveEntryItem PopulatePaths(IFormFile file);
 
         /// <summary>
         /// Encrypts the paths.
         /// </summary>
         /// <returns>The paths.</returns>
         /// <param name="paths">Paths.</param>
-        public abstract IEnumerable<string> EncryptPaths(IEnumerable<string> paths);
+        public abstract ZipArchiveEntryItem EncryptPaths(ZipArchiveEntryItem paths);
 
         /// <summary>
         /// Forms the json.
         /// </summary>
         /// <returns>The json.</returns>
         /// <param name="paths">Paths.</param>
-        public abstract string FormJSON(IEnumerable<string> paths);
+        public abstract string FormJSON(ZipArchiveEntryItem  paths);
     }
 }

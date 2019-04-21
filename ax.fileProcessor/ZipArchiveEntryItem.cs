@@ -1,4 +1,6 @@
-﻿namespace ax.fileProcessor
+﻿using System.Collections.Generic;
+
+namespace ax.fileProcessor
 {
     /// <summary>
     /// Zip archive entry item.
@@ -6,15 +8,21 @@
     public class ZipArchiveEntryItem
     {
         /// <summary>
-        /// Gets or sets the full name.
-        /// </summary>
-        /// <value>The full name.</value>
-        public string FullName { get; set; }
-
-        /// <summary>
         /// Gets or sets the name.
         /// </summary>
         /// <value>The name.</value>
         public string Name { get; set; }
+
+        /// <summary>
+        /// Gets or sets the files.
+        /// </summary>
+        /// <value>The files.</value>
+        public List<string> Files { get; set; }
+
+        /// <summary>
+        /// Gets or sets the folders.
+        /// </summary>
+        /// <value>The folders.</value>
+        public List<ZipArchiveEntryItem> Folders { get; set; }
     }
 }

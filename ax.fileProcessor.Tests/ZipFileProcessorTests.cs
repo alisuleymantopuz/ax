@@ -111,14 +111,27 @@ namespace ax.fileProcessor.Tests
             MockAesEncryptionHelper.Setup(x => x.Encrypt(It.IsAny<string>())).Returns("encrypted");
 
             var zipFileProcessor = new ZipFileProcessor(MockAesEncryptionHelper.Object, MockZipArchivePathsResolver.Object, MockZipArchiveFactory.Object);
+            
+            var zipArchiveEntryItem = new ZipArchiveEntryItem { Name = "decrypted" };
+            zipArchiveEntryItem.Files = new List<string>() { "decrypted", "decrypted", "decrypted" };
 
-            var fakePath = new List<string>() { "decrypted" };
+            var subZipArchiveEntryItem = new ZipArchiveEntryItem { Name = "decrypted" };
+            subZipArchiveEntryItem.Files = new List<string>() { "decrypted", "decrypted", "decrypted" };
 
-            var encryptedPaths = zipFileProcessor.EncryptPaths(fakePath);
+            zipArchiveEntryItem.Folders = new List<ZipArchiveEntryItem>
+            {
+                subZipArchiveEntryItem
+            };
 
-            encryptedPaths.Count().Should().Be(1);
+            var encryptedPaths = zipFileProcessor.EncryptPaths(zipArchiveEntryItem);
 
-            encryptedPaths.First().Should().Be("encrypted");
+            encryptedPaths.Name.Should().Be("encrypted");
+
+            encryptedPaths.Files.First().Should().Be("encrypted");
+
+            encryptedPaths.Folders.First().Name.Should().Be("encrypted");
+
+            encryptedPaths.Folders.First().Files.First().Should().Be("encrypted");
         }
 
         [Fact]
@@ -126,11 +139,12 @@ namespace ax.fileProcessor.Tests
         {
             var zipFileProcessor = new ZipFileProcessor(MockAesEncryptionHelper.Object, MockZipArchivePathsResolver.Object, MockZipArchiveFactory.Object);
 
-            var fakePath = new List<string>() { "decrypted" };
+            var zipArchiveEntryItem = new ZipArchiveEntryItem { Name = "decrypted" };
+            zipArchiveEntryItem.Files = new List<string>() { "decrypted", "decrypted", "decrypted" };
 
-            var expected = JsonConvert.SerializeObject(fakePath);
+            var expected = JsonConvert.SerializeObject(zipArchiveEntryItem);
 
-            var formJson = zipFileProcessor.FormJSON(fakePath);
+            var formJson = zipFileProcessor.FormJSON(zipArchiveEntryItem);
 
             Assert.Equal(expected, formJson);
         }

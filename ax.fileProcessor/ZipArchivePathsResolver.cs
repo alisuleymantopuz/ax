@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO.Compression;
-using ax.encryptionProvider;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace ax.fileProcessor
 {
@@ -16,26 +15,87 @@ namespace ax.fileProcessor
         /// </summary>
         /// <returns>The paths.</returns>
         /// <param name="entries">Entries.</param>
-        public IEnumerable<string> ResolvePaths(IEnumerable<ZipArchiveEntryItem> entries)
+        public ZipArchiveEntryItem ResolvePaths(IEnumerable<ZipEntryInfo> entries)
         {
             if (entries == null)
                 throw new Exception("Entry collection must not be null");
 
-            var entryNames = new List<string>();
+            List<Tuple<string, bool>> fullNames = PopulateFullNames(entries);
+
+            var root = new ZipArchiveEntryItem()
+            {
+                Name = "/",
+                Folders = new List<ZipArchiveEntryItem>()
+            };
+
+            foreach (var path in fullNames)
+            {
+                var parts = path.Item1.Split('/');
+
+                EnsurePartExists(root, parts, path.Item2);
+            }
+
+            return root;
+        }
+
+        /// <summary>
+        /// Populates the full names.
+        /// </summary>
+        /// <returns>The full names.</returns>
+        /// <param name="entries">Entries with isDirectory info.</param>
+        public List<Tuple<string, bool>> PopulateFullNames(IEnumerable<ZipEntryInfo> entries)
+        {
+            var fullNames = new List<Tuple<string, bool>>();
 
             foreach (var entry in entries)
             {
                 if (entry.FullName.EndsWith("/", StringComparison.Ordinal) && string.IsNullOrEmpty(entry.Name))
-                {
-                    entryNames.Add(entry.FullName);
-                }
+                    fullNames.Add(new Tuple<string, bool>(entry.FullName, true));
                 else
-                {
-                    entryNames.Add(entry.Name);
-                }
+                    fullNames.Add(new Tuple<string, bool>(entry.FullName, false));
             }
 
-            return entryNames;
+            return fullNames;
+        }
+
+        /// <summary>
+        /// Ensures the part exists.
+        /// </summary>
+        /// <param name="zipArchiveEntryItem">Zip archive entry item.</param>
+        /// <param name="parts">Parts.</param>
+        private void EnsurePartExists(ZipArchiveEntryItem zipArchiveEntryItem, IEnumerable<string> parts, bool isDirectory)
+        {
+            if (parts.Any())
+            {
+                var title = parts.First();
+
+                if (!isDirectory && Regex.IsMatch(title, @"^[\w,\s-]+\.[A-Za-z]{3}$"))
+                {
+                    if (zipArchiveEntryItem.Files == null)
+                    {
+                        zipArchiveEntryItem.Files = new List<string>();
+                    }
+
+                    zipArchiveEntryItem.Files.Add(title);
+
+                    return;
+                }
+
+                ZipArchiveEntryItem child = zipArchiveEntryItem.Folders.SingleOrDefault(x => x.Name.Equals(title));
+
+                if (child == null)
+                {
+                    child = new ZipArchiveEntryItem()
+                    {
+                        Name = title,
+                        Folders = new List<ZipArchiveEntryItem>()
+                    };
+
+                    zipArchiveEntryItem.Folders.Add(child);
+                }
+
+                EnsurePartExists(child, parts.Skip(1), isDirectory);
+            }
         }
     }
 }

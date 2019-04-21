@@ -1,12 +1,8 @@
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
-using ax.encryptionProvider;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
 using Xunit;
 
 namespace ax.secure.dataManagement.integration.Tests
@@ -39,15 +35,7 @@ namespace ax.secure.dataManagement.integration.Tests
         [Fact]
         public async void Post_Raw_Content_To_Be_Saved_Success()
         {
-            var paths = new List<string>() { "Ford", "BMW", "Fiat" };
-
-            var encryptionConfiguration = new EncryptionConfiguration(_configuration.GetValue<string>("EncryptionKey"));
-
-            var encryptionHelper = new AesEncryptionHelper(encryptionConfiguration);
-
-            var encryptedList = paths.Select(x => encryptionHelper.Encrypt(x)).ToList();
-
-            var rawContent = JsonConvert.SerializeObject(encryptedList);
+            var rawContent = "{\"Name\":\"z3T3j3ZDSFLM6DVc5l7s5Q==\",\"Files\":[\"LwhnBoFuFhXYPwNPzW5Vmg==\"],\"Folders\":[]}";
 
             var stringContent = new StringContent(rawContent, Encoding.UTF8, "application/json");
 

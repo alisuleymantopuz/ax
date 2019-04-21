@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -15,9 +14,9 @@ namespace ax.fileProcessor
     /// </summary>
     public class ZipFileProcessor : FileProcessor, IZipFileProcessor
     {
-        public IAesEncryptionHelper AesEncryptionHelper { get;   set; }
+        public IAesEncryptionHelper AesEncryptionHelper { get; set; }
 
-        public IZipArchivePathsResolver ZipArchivePathsResolver { get;   set; }
+        public IZipArchivePathsResolver ZipArchivePathsResolver { get; set; }
 
         public IZipArchiveFactory ZipArchiveFactory { get; set; }
 
@@ -49,15 +48,17 @@ namespace ax.fileProcessor
         /// </summary>
         /// <returns>The paths.</returns>
         /// <param name="file">File.</param>
-        public override IEnumerable<string> PopulatePaths(IFormFile file)
+        public override ZipArchiveEntryItem PopulatePaths(IFormFile file)
         {
             using (ZipArchive archive = ZipArchiveFactory.CreateZipArchive(file.OpenReadStream()))
             {
-                return ZipArchivePathsResolver.ResolvePaths(archive.Entries.Select(x => new ZipArchiveEntryItem
+                var entryInfos = archive.Entries.Select(x => new ZipEntryInfo
                 {
                     FullName = x.FullName,
                     Name = x.Name
-                }).AsEnumerable());
+                }).AsEnumerable();
+
+                return ZipArchivePathsResolver.ResolvePaths(entryInfos);
             }
         }
 
@@ -66,9 +67,35 @@ namespace ax.fileProcessor
         /// </summary>
         /// <returns>The paths.</returns>
         /// <param name="paths">Paths.</param>
-        public override IEnumerable<string> EncryptPaths(IEnumerable<string> paths)
+        public override ZipArchiveEntryItem EncryptPaths(ZipArchiveEntryItem paths)
         {
-            return paths.Select(x => AesEncryptionHelper.Encrypt(x)).ToList();
+            if (paths == null)
+                throw new Exception("Paths must not be null!");
+
+            EnsureFieldsEncrypted(paths, AesEncryptionHelper);
+
+            return paths;
+        }
+
+        private void EnsureFieldsEncrypted(ZipArchiveEntryItem paths, IAesEncryptionHelper aesEncryptionHelper)
+        {
+            paths.Name = aesEncryptionHelper.Encrypt(paths.Name);
+
+            if (paths.Files != null && paths.Files.Any())
+            {
+                for (int i = 0; i < paths.Files.Count(); i++)
+                {
+                    paths.Files[i] = aesEncryptionHelper.Encrypt(paths.Files[i]);
+                }
+            }
+
+            if (paths.Folders != null && paths.Folders.Any())
+            {
+                foreach (var folder in paths.Folders)
+                {
+                    EnsureFieldsEncrypted(folder, aesEncryptionHelper);
+                }
+            }
         }
 
         /// <summary>
@@ -76,7 +103,7 @@ namespace ax.fileProcessor
         /// </summary>
         /// <returns>The json.</returns>
         /// <param name="paths">Paths.</param>
-        public override string FormJSON(IEnumerable<string> paths)
+        public override string FormJSON(ZipArchiveEntryItem paths)
         {
             return JsonConvert.SerializeObject(paths);
         }

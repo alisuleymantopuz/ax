@@ -23,7 +23,7 @@ namespace ax.storage.Tests
         {
             var fakeZipArchiveContent = new ZipArchive
             {
-                Content = "[ \"Ford\", \"BMW\", \"Fiat\" ]",
+                Content = "{\"Name\":\"Name\",\"Files\":[\"Sub file\"]}",
                 CreationDate = DateTime.Now,
                 Id = new Random().Next(0, 100)
             };
@@ -45,9 +45,9 @@ namespace ax.storage.Tests
         [Fact]
         public void SaveRawContent_Success()
         {
-            var deserializedExpected = new List<string> { "Ford", "BMW", "Fiat" };
+            var deserializedExpected = new ZipArchiveEntryItem { Name = "Name" };
 
-            var rawContent = "[ \"Ford\", \"BMW\", \"Fiat\" ]";
+            var rawContent = "{\"Name\":\"Name\"}";
 
             MockEncryptedZipArchiveHandler.Setup(x => x.DeserializeRawContent(It.IsAny<string>())).Returns(deserializedExpected);
 
@@ -75,11 +75,11 @@ namespace ax.storage.Tests
         [Fact]
         public void SaveRawContent_Failed_With_NonDeserializedStatus()
         {
-            var rawContent = "[ \"Ford\", \"BMW\", \"Fiat\" ]";
+            var rawContent = "{\"Name\":\"Name\",\"Files\":[\"Sub file\"]}";
 
-            List<string> list = null;
+            ZipArchiveEntryItem zipArchiveEntryItem = null;
 
-            MockEncryptedZipArchiveHandler.Setup(x => x.DeserializeRawContent(It.IsAny<string>())).Returns(list);
+            MockEncryptedZipArchiveHandler.Setup(x => x.DeserializeRawContent(It.IsAny<string>())).Returns(zipArchiveEntryItem);
 
             var storeManager = new StorageManager(MockEncryptedZipArchiveHandler.Object, MockZipArchiveDBContext.Object);
 
